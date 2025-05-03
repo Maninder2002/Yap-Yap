@@ -7,7 +7,7 @@ import { NoChatSelected }from '../components/NoChatSelected.jsx'
 
 export const HomePage = () => {
 
-  const { selectedUser } = useChatStore
+  const { selectedUser } = useChatStore();
 
   return (
     <div className='h-screen bg-base-200'>

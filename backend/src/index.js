@@ -17,12 +17,14 @@ dotenv.config();
 
 const PORT = process.env.PORT
 const __dirname = path.resolve();
+const allowedOrigins = ["http://localhost:5173", "https://yap-yap-7p0x.onrender.com"];
+
 
 app.use(express.json())
 app.use(cookieparser())
 app.use(
     cors({
-      origin: "http://localhost:5173",
+      origin: allowedOrigins,
       credentials:true,
     })
   );
@@ -37,7 +39,7 @@ app.use("/api/auth", authRoutes)
 app.use("/api/messages", messageRoutes)
 
 if(process.env.NODE_ENV==="production"){
-  app.use(express.static(path.join(__dirname,"../frontend/dist")));
+  app.use(express.static(path.join(__dirname, "../frontend/dist")));
 }
 
 app.get("*",(req,res)=>{

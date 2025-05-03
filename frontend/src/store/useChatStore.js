@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { axiosInstance } from '../lib/axios.js';
 import toast from 'react-hot-toast';
+import{useAuthStore} from './useAuthStore.js'
 
 export const useChatStore = create((set,get)=>({
     messages:[],
@@ -15,8 +16,8 @@ export const useChatStore = create((set,get)=>({
             const res = await axiosInstance.get("/messages/user");
             set({users:res.data})
         } catch (error) {
-            toast.error(error.responce.data.error);
-        }finally{
+            toast.error(error.response?.data?.error || 'Failed to fetch users');
+          }finally{
         set({isUsersLoading:false});
         }
     },
@@ -27,8 +28,8 @@ export const useChatStore = create((set,get)=>({
             const res = await axiosInstance.get(`/messages/${userId}`);
             set({messages:res.data})
         } catch (error) {
-            toast.error(error.responce.data.error);
-        }finally{
+            toast.error(error.response?.data?.error || 'Failed to fetch messages');
+          }finally{
         set({isMessagesLoading:false});
         }
     },
@@ -41,9 +42,32 @@ export const useChatStore = create((set,get)=>({
             set({messages:[...messages,res.data] });
 
         } catch (error) {
-            toast(error.responce.data.message)
-        }
+            toast.error(error.response?.data?.error || 'Failed to send messages');
+          }
     },
+
+    subscribeToMessages:()=>{
+        const{selectedUser} = get();
+        if(!selectedUser) return;
+
+        const socket = useAuthStore.getState().socket;
+
+        socket.on('newMessage',(newMessage)=>{
+
+            if(newMessage.senderId===selectedUser._id) return;
+
+
+            set({
+                messages:[...get().messages,newMessage],
+            })
+        })
+    },
+
+    unsubscribeFromMessage:()=>{
+        const socket = useAuthStore.getState().socket;
+        socket.off('newMessage');
+    },
+
 
     setSelectedUser:(selectedUser)=>set({selectedUser}),
 }))

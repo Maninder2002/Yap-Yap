@@ -18,9 +18,13 @@ const __dirname = path.resolve();
 
 app.use(express.json());
 app.use(cookieParser());
+const allowedOrigins = process.env.NODE_ENV === "production"
+  ? ["https://yap-yap-7p0x.onrender.com"]
+  : ["http://localhost:5173"];
+
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: allowedOrigins,
     credentials: true,
   })
 );

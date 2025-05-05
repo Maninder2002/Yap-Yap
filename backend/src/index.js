@@ -29,11 +29,12 @@ app.use(
     })
   );
 
-  app.use((req, res, next) => {
-    res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
-    res.setHeader("Access-Control-Allow-Credentials", "true");
-    next();
-});
+// Removed manual CORS headers middleware to avoid conflicts with cors package
+// app.use((req, res, next) => {
+//   res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+//   res.setHeader("Access-Control-Allow-Credentials", "true");
+//   next();
+// });
 
 app.use("/api/auth", authRoutes)
 app.use("/api/messages", messageRoutes)
